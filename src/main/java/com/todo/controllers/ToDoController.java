@@ -1,5 +1,10 @@
 package com.todo.controllers;
 
+import java.sql.Timestamp;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -45,10 +50,19 @@ public class ToDoController {
 	}
 
     @PostMapping("/todo")
-    public String create_todo(@RequestParam(value = "title", defaultValue = "Job") String title,
-                             @RequestParam(value = "order", defaultValue = "0") int order) {
-        return String.format(template, title, order);
+    public String create_todo(
+            @RequestParam(value = "text", defaultValue = "Job") String text,
+            @RequestParam(value = "isCompleted", defaultValue = "false") boolean isCompleted,
+            @RequestParam(value = "createdAt", defaultValue = "") String createdAt
+    ) {
+        LocalDateTime currentTime = LocalDateTime.now(Clock.systemUTC());   // should give timestamp in GMT
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        createdAt = currentTime.format(formatter);
+        isCompleted = false;
+        return String.format(template, text, isCompleted, createdAt);
     }
+
+
 
     @GetMapping("/todo_list")
     public String get_list() {
