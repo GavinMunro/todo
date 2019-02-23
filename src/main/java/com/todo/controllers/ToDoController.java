@@ -8,12 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -50,11 +45,9 @@ public class ToDoController {
 	}
 
     @PostMapping("/todo")
-    public String create_todo(
-            @RequestParam(value = "text", defaultValue = "Job") String text,
-            @RequestParam(value = "isCompleted", defaultValue = "false") boolean isCompleted,
-            @RequestParam(value = "createdAt", defaultValue = "") String createdAt
-    ) {
+    public String create_todo(@RequestParam(value = "text", defaultValue = "Job") String text) {
+        boolean isCompleted;
+        String createdAt;
         LocalDateTime currentTime = LocalDateTime.now(Clock.systemUTC());   // should give timestamp in GMT
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         createdAt = currentTime.format(formatter);
@@ -70,7 +63,12 @@ public class ToDoController {
     }
 
     @GetMapping("/todo/{id}")
-    public String get_item(@PathVariable(value = "id") int id) {
+    public String get_item(@PathVariable(value="id") int id) {
         return  "Soon I will return the todo item: " + id;
+    }
+
+    @PatchMapping("/todo/{id}")
+    public String edit_item(@PathVariable(value="id") int id) {
+	    return "ToDo: enable editing an item - eg. update icCompleted";
     }
 }
