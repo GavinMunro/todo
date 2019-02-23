@@ -24,9 +24,9 @@ public class ToDoController {
 	}
 
     @PostMapping("/todo")
-    public String create_todo(@RequestParam(value = "name", defaultValue = "Job") String name,
-                             @RequestParam(value = "priority", defaultValue = "Medium") String priority) {
-        return String.format(template, name, priority);
+    public String create_todo(@RequestParam(value = "title", defaultValue = "Job") String title,
+                             @RequestParam(value = "order", defaultValue = "0") int order) {
+        return String.format(template, title, order);
     }
 
     @GetMapping("/todo_list")
