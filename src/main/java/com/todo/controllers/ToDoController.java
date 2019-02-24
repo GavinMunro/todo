@@ -1,5 +1,6 @@
 package com.todo.controllers;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -9,6 +10,8 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.ServletException;
 
 
 @RestController
@@ -68,7 +71,9 @@ public class ToDoController {
     }
 
     @PatchMapping("/todo/{id}")
-    public String edit_item(@PathVariable(value="id") int id) {
-	    return "ToDo: enable editing an item - eg. update icCompleted";
+    public String edit_item(@PathVariable(value="id") int id,
+                            @RequestParam(value = "text", defaultValue = "Job") String text,
+                            @RequestParam(value = "isCompleted", defaultValue = "true") String isCompleted) {
+        return String.format(template, id, text, isCompleted);
     }
 }
