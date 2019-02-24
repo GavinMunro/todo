@@ -1,1 +1,1 @@
-# todo
+# Spring Boot demo: ToDo app
