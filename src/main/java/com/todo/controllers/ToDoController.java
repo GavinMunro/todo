@@ -26,12 +26,12 @@ public class ToDoController {
 	private static final String template = "TODO: #" + "%s: %s created at %s";
 	
 	@Autowired
-	ToDoService todoService;
+	private ToDoService todoService;
 
 	private final AtomicLong counter = new AtomicLong();
 
 	@RequestMapping("/tasks/validateBrackets")
-	public static boolean validateBrackets(String exprn){
+	public static boolean validateBrackets(@RequestParam(value = "exprn", defaultValue = "") String exprn){
 		if(exprn == null || exprn.length() % 2 != 0) return false;
 		Stack<Character> stack = new Stack<>();
 		for(int i = 0; i < exprn.length(); i++){
@@ -59,9 +59,8 @@ public class ToDoController {
 
 	@PostMapping("/todo")
 	public String create_todo(@RequestParam(value = "text", defaultValue = "Job") String text)
-			throws ServletException, IOException {
-		String result = todoService.validateMarkers(text);
-		return result;
+			throws IllegalArgumentException, IOException {
+        return todoService.validateMarkers(text);
 	}
 
 	@GetMapping("/todo_list")
