@@ -31,24 +31,26 @@ public class ToDoController {
 	private final AtomicLong counter = new AtomicLong();
 
 	@RequestMapping("/tasks/validateBrackets")
-	public boolean validateBrackets(@RequestParam(value = "exprn", defaultValue = "") String exprn) {
-		if (exprn.isEmpty())
-			return true;
+	public static boolean validateBrackets(String exprn){
+		if(exprn == null || exprn.length() % 2 != 0) return false;
 		Stack<Character> stack = new Stack<>();
-		for (int i = 0; i < exprn.length(); i++) {
-			char current = exprn.charAt(i);
-			if (current == '{' || current == '(' || current == '[') {
-				stack.push(current);
-			}
-
-			if (current == '}' || current == ')' || current == ']') {
-				if (stack.isEmpty())
+		for(int i = 0; i < exprn.length(); i++){
+			char c = exprn.charAt(i);
+			if(c == '(' || c == '{' || c == '['){
+				stack.push(c);
+			} else if(c == ')' || c == '}' || c == ']'){
+				if(!stack.isEmpty()){
+					char last = stack.pop();
+					if(last == '(' && c != ')'){
+						return false;
+					} else if(last == '{' && c != '}'){
+						return false;
+					} else if(last == '[' && c != ']'){
+						return false;
+					}
+				} else {
 					return false;
-				char last = stack.peek();
-				if (current == '}' && last == '{' || current == ')' && last == '(' || current == ']' && last == '[')
-					stack.pop();
-				else
-					return false;
+				}
 			}
 		}
 		return stack.isEmpty();
