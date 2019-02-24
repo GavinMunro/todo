@@ -9,82 +9,82 @@ import java.time.format.DateTimeFormatter;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.todo.model.ToDoItem;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
-
 @RestController
 public class ToDoController {
 
-	private static final String template = "TODO: #"
-			+ "%s: %s created at %s";
+	private static final String template = "TODO: #" + "%s: %s created at %s";
 
 	private final AtomicLong counter = new AtomicLong();
 
 	@RequestMapping("/tasks/validateBrackets")
 	public boolean validateBrackets(@RequestParam(value = "exprn", defaultValue = "") String exprn) {
-            if (exprn.isEmpty())
-                return true;
-            Stack<Character> stack = new Stack<>();
-            for (int i = 0; i < exprn.length(); i++) {
-                char current = exprn.charAt(i);
-                if (current == '{' || current == '(' || current == '[')
-                    { stack.push(current); }
+		if (exprn.isEmpty())
+			return true;
+		Stack<Character> stack = new Stack<>();
+		for (int i = 0; i < exprn.length(); i++) {
+			char current = exprn.charAt(i);
+			if (current == '{' || current == '(' || current == '[') {
+				stack.push(current);
+			}
 
-                if (current == '}' || current == ')' || current == ']') {
-                    if (stack.isEmpty())
-                        return false;
-                    char last = stack.peek();
-                    if (   current == '}' && last == '{'
-                        || current == ')' && last == '('
-                        || current == ']' && last == '[' )
-                        stack.pop();
-                    else
-                        return false;
-                }
-            }
-            return stack.isEmpty();
+			if (current == '}' || current == ')' || current == ']') {
+				if (stack.isEmpty())
+					return false;
+				char last = stack.peek();
+				if (current == '}' && last == '{' || current == ')' && last == '(' || current == ']' && last == '[')
+					stack.pop();
+				else
+					return false;
+			}
+		}
+		return stack.isEmpty();
 	}
 
 	private boolean checkChars(String text) {
-	    return true;  //for now
-    }
+		return true; // for now
+	}
 
-    @PostMapping("/todo")
-    // public JSONObject...
-    public String create_todo(
-            @RequestParam(value = "text", defaultValue = "Job") String text
-    ) throws ServletException, IOException {
-        boolean isCompleted;
-        String createdAt;
-        LocalDateTime currentTime = LocalDateTime.now(Clock.systemUTC());   // should give timestamp in GMT
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        createdAt = currentTime.format(formatter);
-        isCompleted = false;
-        if (checkChars(text)) {
-            return String.format(template, text, isCompleted, createdAt);
-        } else {
-            return "Alphanumeric chars only!";
-        }
-    }
+	@PostMapping("/todo")
+	// public JSONObject...
+	public String create_todo(@RequestParam(value = "text", defaultValue = "Job") String text)
+			throws ServletException, IOException {
+		boolean isCompleted;
+		String createdAt;
+		LocalDateTime currentTime = LocalDateTime.now(Clock.systemUTC()); // should give timestamp in GMT
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		createdAt = currentTime.format(formatter);
+		isCompleted = false;
+		if (checkChars(text)) {
+			return String.format(template, text, isCompleted, createdAt);
+		} else {
+			return "Alphanumeric chars only!";
+		}
+	}
 
+	@GetMapping("/todo_list")
+	public String get_list() {
+		return "Soon I will return all the todo items from the DB";
+	}
 
-    @GetMapping("/todo_list")
-    public String get_list() {
-        return  "Soon I will return all the todo items from the DB";
-    }
+	@GetMapping("/todo/{id}")
+	public String get_item(@PathVariable(value = "id") int id) {
+		return "Soon I will return the todo item: " + id;
+	}
 
-    @GetMapping("/todo/{id}")
-    public String get_item(@PathVariable(value="id") int id) {
-        return  "Soon I will return the todo item: " + id;
-    }
-
-    @PatchMapping("/todo/{id}")
-    public String edit_item(@PathVariable(value="id") int id,
-                            @RequestParam(value = "text", defaultValue = "Job") String text,
-                            @RequestParam(value = "isCompleted", defaultValue = "true") String isCompleted) {
-        return String.format(template, id, text, isCompleted);
-    }
+	@PutMapping("/todo/{id}")
+	public ResponseEntity<ToDoItem> edit_item(
+			@PathVariable(value = "id") int id, 
+			@RequestBody ToDoItem item
+	) {
+		return new ResponseEntity<ToDoItem>(item, HttpStatus.OK);
+	}
 }
