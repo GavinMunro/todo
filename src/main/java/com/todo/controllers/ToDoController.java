@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
 
@@ -47,17 +48,27 @@ public class ToDoController {
             return stack.isEmpty();
 	}
 
+	private boolean checkChars(String text) {
+	    return true;  //for now
+    }
+
     @PostMapping("/todo")
-    public String create_todo(@RequestParam(value = "text", defaultValue = "Job") String text) {
+    // public JSONObject...
+    public String create_todo(
+            @RequestParam(value = "text", defaultValue = "Job") String text
+    ) throws ServletException, IOException {
         boolean isCompleted;
         String createdAt;
         LocalDateTime currentTime = LocalDateTime.now(Clock.systemUTC());   // should give timestamp in GMT
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         createdAt = currentTime.format(formatter);
         isCompleted = false;
-        return String.format(template, text, isCompleted, createdAt);
+        if (checkChars(text)) {
+            return String.format(template, text, isCompleted, createdAt);
+        } else {
+            return "Alphanumeric chars only!";
+        }
     }
-
 
 
     @GetMapping("/todo_list")
