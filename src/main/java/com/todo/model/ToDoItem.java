@@ -1,6 +1,7 @@
 package com.todo.model;
 
 import java.time.ZonedDateTime;
+import java.util.Date;
 
 public class ToDoItem {
 
@@ -15,17 +16,17 @@ public class ToDoItem {
 		this.isCompleted = isCompleted;
 	}
 
-	public ZonedDateTime getCreatedAt() {
+	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-	public void setCreatedAt(ZonedDateTime createdAt) {
+	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
 	}
 
-	private ZonedDateTime createdAt;
+	private Date createdAt;
 
-    public ToDoItem(long id, String text, boolean isCompleted, ZonedDateTime createdAt) {
+    public ToDoItem(long id, String text, boolean isCompleted, Date createdAt) {
         this.id = id;
         this.text = text;
         this.isCompleted = false;

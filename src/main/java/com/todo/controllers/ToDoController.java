@@ -9,11 +9,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.todo.model.ToDoItem;
+import com.todo.service.ToDoService;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -22,6 +24,9 @@ import javax.servlet.ServletException;
 public class ToDoController {
 
 	private static final String template = "TODO: #" + "%s: %s created at %s";
+	
+	@Autowired
+	ToDoService todoService;
 
 	private final AtomicLong counter = new AtomicLong();
 
@@ -49,25 +54,12 @@ public class ToDoController {
 		return stack.isEmpty();
 	}
 
-	private boolean checkChars(String text) {
-		return true; // for now
-	}
 
 	@PostMapping("/todo")
-	// public JSONObject...
 	public String create_todo(@RequestParam(value = "text", defaultValue = "Job") String text)
 			throws ServletException, IOException {
-		boolean isCompleted;
-		String createdAt;
-		LocalDateTime currentTime = LocalDateTime.now(Clock.systemUTC()); // should give timestamp in GMT
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		createdAt = currentTime.format(formatter);
-		isCompleted = false;
-		if (checkChars(text)) {
-			return String.format(template, text, isCompleted, createdAt);
-		} else {
-			return "Alphanumeric chars only!";
-		}
+		String result = todoService.validateMarkers(text);
+		return result;
 	}
 
 	@GetMapping("/todo_list")
